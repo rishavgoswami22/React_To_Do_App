@@ -15,11 +15,18 @@ import {
   Box,
   Badge,
   useMediaQuery,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import SettingsIcon from "@mui/icons-material/Settings";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const TaskTrackerApp = () => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -33,6 +40,7 @@ const TaskTrackerApp = () => {
   });
   const [tabIndex, setTabIndex] = useState(0);
   const [darkMode, setDarkMode] = useState(prefersDarkMode);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleAddTask = (newTask) => {
     setTasks([...tasks, newTask]);
@@ -80,38 +88,39 @@ const TaskTrackerApp = () => {
     setDarkMode((prevDarkMode) => !prevDarkMode);
   };
 
-  const tabStyles = (currentTab, tabValue) => ({
-    color: currentTab === tabValue ? "#fff" : "black",
+  const tabStyles = (currentTab, tabValue, darkMode) => ({
+    color: currentTab === tabValue ? "#fff" : (darkMode ? "#fff" : "#000"),
     backgroundColor: currentTab === tabValue ? "#d97706" : "transparent",
     fontWeight: currentTab === tabValue ? "bold" : "normal",
     borderRadius: "4px",
     minWidth: "120px",
     marginRight: "10px",
     transition: "background-color 0.4s ease, color 0.4s ease",
+    textShadow: currentTab === tabValue ? (darkMode ? "0 0 2px rgba(255, 255, 255, 0.5)" : "0 0 2px rgba(0, 0, 0, 0.5)") : "none",
     "&:hover": {
       backgroundColor: currentTab === tabValue ? "#d97706" : "transparent",
-      color: currentTab === tabValue ? "#fff" : "white",
+      color: currentTab === tabValue ? "#fff" : (darkMode ? "#fff" : "#000"),
+      textShadow: currentTab === tabValue ? (darkMode ? "0 0 2px rgba(255, 255, 255, 0.5)" : "0 0 2px rgba(0, 0, 0, 0.5)") : "none",
     },
   });
-
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: "#FFA500",
-      },
-      secondary: {
-        main: "#2E8B57",
-      },
-      background: {
-        default: darkMode ? "#212121" : "#f0f0f0",
-      },
-      mode: darkMode ? "dark" : "light",
+ const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#FFA500",
     },
-    typography: {
-      fontSize: 16,
-      fontWeight: "500",
+    secondary: {
+      main: "#2E8B57",
     },
-  });
+    background: {
+      default: darkMode ? "#212121" : "#f0f0f0",
+    },
+    mode: darkMode ? "dark" : "light",
+  },
+  typography: {
+    fontSize: 16,
+    fontWeight: "700",
+  },
+});
 
   return (
     <ThemeProvider theme={theme}>
@@ -126,60 +135,86 @@ const TaskTrackerApp = () => {
       >
         <AppBar position="static">
           <Toolbar sx={{ justifyContent: "space-between" }}>
-            <Typography variant="h6">Task Tracker</Typography>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ display: { xs: "block", md: "none" } }}
+              onClick={() => setSidebarOpen(true)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" sx={{ display: { xs: "none", md: "block" },fontWeight: "bold" }}>
+              Task Tracker
+            </Typography>
+            <Tabs
+              value={tabIndex}
+              onChange={handleTabChange}
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{
+                '@media (max-width: 600px)': {
+                  display: 'none',
+                },
+              }}
+            >
+              <Tab label="Tasks" sx={tabStyles(tabIndex, 0)} />
+              <Tab
+                label={
+                  <Badge badgeContent={completedTasks.length} color="error">
+                    Completed Tasks
+                  </Badge>
+                }
+                sx={tabStyles(tabIndex, 1)}
+              />
+              <Tab label="Settings" sx={tabStyles(tabIndex, 2)} />
+            </Tabs>
           </Toolbar>
-          <Tabs
-            value={tabIndex}
-            onChange={handleTabChange}
-            variant="scrollable"
-            scrollButtons="auto"
-            sx={{
-              '@media (max-width: 600px)': {
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                '& .MuiTabs-flexContainer': {
-                  flexDirection: 'row',
-                },
-                '& .MuiTab-root': {
-                  width: 'auto',
-                  minWidth: 'unset',
-                  padding: '6px 12px',
-                },
-                '& .MuiTab-icon': {
-                  marginBottom: '4px',
-                },
-                '& .MuiBadge-root': {
-                  position: 'unset',
-                  top: 'unset',
-                  right: 'unset',
-                  transform: 'unset',
-                  margin: '0 6px',
-                },
-              },
-            }}
-          >
-            <Tab
-              icon={<Box sx={{ display: "flex", alignItems: "center" }}><FormatListBulletedIcon sx={{ fontSize: 20 }} />Tasks</Box>}
-              sx={tabStyles(tabIndex, 0)}
-            />
-            <Tab
-              icon={
-                <Box sx={{ display: "flex", alignItems: "center", position: "relative" }}>
-                  <CheckCircleOutlineIcon sx={{ fontSize: 20 }} />Completed Tasks
-                  {completedTasks.length > 0 && (
-                    <Badge badgeContent={completedTasks.length} color="success" sx={{ marginLeft: 2 }} />
-                  )}
-                </Box>
-              }
-              sx={tabStyles(tabIndex, 1)}
-            />
-            <Tab
-              icon={<Box sx={{ display: "flex", alignItems: "center" }}><SettingsIcon sx={{ fontSize: 20 }} />Settings</Box>}
-              sx={tabStyles(tabIndex, 2)}
-            />
-          </Tabs>
         </AppBar>
+        <Drawer
+          anchor="left"
+          open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        >
+          <List>
+            <ListItem
+              button
+              onClick={() => {
+                setTabIndex(0);
+                setSidebarOpen(false);
+              }}
+            >
+              <ListItemIcon>
+                <FormatListBulletedIcon />
+              </ListItemIcon>
+              <ListItemText primary="Tasks" />
+            </ListItem>
+            <ListItem
+              button
+              onClick={() => {
+                setTabIndex(1);
+                setSidebarOpen(false);
+              }}
+            >
+              <ListItemIcon>
+                <CheckCircleOutlineIcon />
+              </ListItemIcon>
+              <ListItemText primary="Completed Tasks" />
+            </ListItem>
+            <ListItem
+              button
+              onClick={() => {
+                setTabIndex(2);
+                setSidebarOpen(false);
+              }}
+            >
+              <ListItemIcon>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary="Settings" />
+            </ListItem>
+          </List>
+        </Drawer>
         <Container sx={{ flexGrow: 1, mt: 3 }}>
           <Paper sx={{ p: 2, flexGrow: 1 }}>
             <Grid container spacing={3}>
