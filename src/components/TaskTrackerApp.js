@@ -14,14 +14,12 @@ import {
   Paper,
   Box,
   Badge,
-  IconButton,
   useMediaQuery,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import SettingsIcon from "@mui/icons-material/Settings";
-
 
 const TaskTrackerApp = () => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -130,7 +128,37 @@ const TaskTrackerApp = () => {
           <Toolbar sx={{ justifyContent: "space-between" }}>
             <Typography variant="h6">Task Tracker</Typography>
           </Toolbar>
-          <Tabs value={tabIndex} onChange={handleTabChange}>
+          <Tabs
+            value={tabIndex}
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              '@media (max-width: 600px)': {
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                '& .MuiTabs-flexContainer': {
+                  flexDirection: 'row',
+                },
+                '& .MuiTab-root': {
+                  width: 'auto',
+                  minWidth: 'unset',
+                  padding: '6px 12px',
+                },
+                '& .MuiTab-icon': {
+                  marginBottom: '4px',
+                },
+                '& .MuiBadge-root': {
+                  position: 'unset',
+                  top: 'unset',
+                  right: 'unset',
+                  transform: 'unset',
+                  margin: '0 6px',
+                },
+              },
+            }}
+          >
             <Tab
               icon={<Box sx={{ display: "flex", alignItems: "center" }}><FormatListBulletedIcon sx={{ fontSize: 20 }} />Tasks</Box>}
               sx={tabStyles(tabIndex, 0)}

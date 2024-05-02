@@ -27,9 +27,6 @@ const App = () => {
         <Route path="/" element={<TaskTrackerApp toggleDarkMode={toggleDarkMode} />} />
         <Route path="/settings" element={<Settings toggleDarkMode={toggleDarkMode} />} />
       </Routes>
-      <Button onClick={toggleDarkMode}>
-        {darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-      </Button>
     </ThemeProvider>
   );
 };

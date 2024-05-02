@@ -5,11 +5,11 @@ const Settings = ({ toggleDarkMode }) => {
   const [selectedLanguage, setSelectedLanguage] = useState('en');
 
   const handleToggleDarkMode = () => {
-    toggleDarkMode(true); 
+    toggleDarkMode(true);
   };
 
   const handleToggleDefaultMode = () => {
-    toggleDarkMode(false); 
+    toggleDarkMode(false);
   };
 
   const handleLanguageChange = (event) => {
@@ -20,23 +20,22 @@ const Settings = ({ toggleDarkMode }) => {
     <div>
       <Typography variant="h6">Settings</Typography>
       <div style={{ marginBottom: '10px' }}>
-      <Button
+        <Button
           variant="contained"
           color="primary"
           size="small"
-          sx={{ width: '120px', borderRadius: '8px', marginRight: '10px' }}
+          sx={{
+            width: '140px', 
+            height: '40px', 
+            borderRadius: '20px', 
+            marginRight: '10px',
+            boxShadow: 'none', 
+            display: 'inline-flex', 
+            fontWeight:"bold"
+          }}
           onClick={handleToggleDarkMode}
         >
-          Dark mode
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          size="small"
-          sx={{ width: '120px', borderRadius: '8px' }}
-          onClick={handleToggleDefaultMode}
-        >
-          Light mode
+           Change Mode
         </Button>
       </div>
       <div style={{ color: '#333' }}>
